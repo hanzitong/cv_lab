@@ -1,0 +1,11 @@
+## このファイルを local.properties にコピーしてパスを設定してください
+## このテンプレート自体は git 管理対象です。local.properties は .gitignore 済みです。
+
+# Android SDK（Android Studio が自動設定）
+sdk.dir=/Users/yourname/Library/Android/sdk
+
+# OpenCV Android SDK のパス
+# 1. https://github.com/opencv/opencv/releases から opencv-4.x.x-android-sdk.zip をダウンロード
+# 2. 任意の場所に展開
+# 3. 展開されたディレクトリのパスを設定（末尾スラッシュなし）
+opencv.sdk.path=/path/to/OpenCV-android-sdk

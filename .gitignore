@@ -1,3 +1,18 @@
+# Android / Gradle
+.gradle/
+local.properties        # local.properties.template をコピーして設定
+app/release/
+*.apk
+*.aab
+
+# OpenCV Android SDK（各自でダウンロード — docs/setup.md 参照）
+OpenCV-android-sdk/
+opencv/
+
+# IDE
+.idea/
+*.iml
+
 # Prerequisites
 *.d
 
