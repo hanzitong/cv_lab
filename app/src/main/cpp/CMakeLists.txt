@@ -19,6 +19,7 @@ add_library(
     plugins/orb_processor.cpp
     plugins/akaze_processor.cpp
     plugins/canny_processor.cpp
+    plugins/morphology_processor.cpp
 )
 
 target_include_directories(cv_feature_lab PRIVATE

@@ -4,6 +4,7 @@
 #include "plugins/orb_processor.h"
 #include "plugins/akaze_processor.h"
 #include "plugins/canny_processor.h"
+#include "plugins/morphology_processor.h"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 共通ヘルパー
@@ -260,5 +261,126 @@ TEST_F(CannyProcessorTest, SetParameter_HighThreshold2_ReducesEdges) {
 }
 
 TEST_F(CannyProcessorTest, SetParameter_UnknownKey_DoesNotCrash) {
+    EXPECT_NO_THROW(proc.setParameter("unknown", 1.f));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MorphologyProcessor
+// ─────────────────────────────────────────────────────────────────────────────
+
+class MorphologyProcessorTest : public ::testing::Test {
+protected:
+    MorphologyProcessor proc;
+    static constexpr int W = 320, H = 240;
+};
+
+TEST_F(MorphologyProcessorTest, Name_IsMorphology) {
+    EXPECT_EQ("Morphology", proc.name());
+}
+
+TEST_F(MorphologyProcessorTest, OutputType_IsOVERLAY_IMAGE) {
+    EXPECT_EQ(OutputType::OVERLAY_IMAGE, proc.outputType());
+}
+
+TEST_F(MorphologyProcessorTest, ParamDefs_HasRequiredKeys) {
+    auto defs = proc.paramDefs();
+    auto has = [&](const std::string& k) {
+        return std::any_of(defs.begin(), defs.end(),
+            [&](const ParamDef& d){ return d.key == k; });
+    };
+    EXPECT_TRUE(has("operation"));
+    EXPECT_TRUE(has("kernelSize"));
+    EXPECT_TRUE(has("iterations"));
+    EXPECT_TRUE(has("kernelShape"));
+}
+
+TEST_F(MorphologyProcessorTest, ParamDefs_AllRangesValid) {
+    for (const auto& d : proc.paramDefs())
+        EXPECT_LT(d.min, d.max) << "param " << d.key << " has invalid range";
+}
+
+TEST_F(MorphologyProcessorTest, Process_ReturnsNonEmptyOverlay) {
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    EXPECT_FALSE(out.overlayImage.empty());
+}
+
+TEST_F(MorphologyProcessorTest, Process_OverlayDimensionsMatchInput) {
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    EXPECT_EQ(W, out.overlayImage.cols);
+    EXPECT_EQ(H, out.overlayImage.rows);
+}
+
+TEST_F(MorphologyProcessorTest, Process_OverlayIsGrayscale) {
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    EXPECT_EQ(1, out.overlayImage.channels());
+    EXPECT_EQ(CV_8UC1, out.overlayImage.type());
+}
+
+TEST_F(MorphologyProcessorTest, Process_KeypointsAreEmpty) {
+    EXPECT_TRUE(proc.process(TestImage::checkerboard(W, H)).keypoints.empty());
+}
+
+TEST_F(MorphologyProcessorTest, Erosion_ShrinksBrightRegions) {
+    proc.setParameter("operation", 0.f);   // Erosion
+    proc.setParameter("kernelSize", 5.f);
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    // 収縮後は明部ピクセルが減る → 平均輝度が元より低い or 等しい
+    double meanBefore = cv::mean(TestImage::checkerboard(W, H))[0];
+    double meanAfter  = cv::mean(out.overlayImage)[0];
+    EXPECT_LE(meanAfter, meanBefore + 1.0);  // 浮動小数点誤差を許容
+}
+
+TEST_F(MorphologyProcessorTest, Dilation_ExpandsBrightRegions) {
+    proc.setParameter("operation", 1.f);   // Dilation
+    proc.setParameter("kernelSize", 5.f);
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    double meanBefore = cv::mean(TestImage::checkerboard(W, H))[0];
+    double meanAfter  = cv::mean(out.overlayImage)[0];
+    EXPECT_GE(meanAfter, meanBefore - 1.0);
+}
+
+TEST_F(MorphologyProcessorTest, Gradient_CheckerboardHasEdges) {
+    proc.setParameter("operation", 4.f);   // Gradient = Dilation - Erosion
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    double maxVal;
+    cv::minMaxLoc(out.overlayImage, nullptr, &maxVal);
+    EXPECT_GT(maxVal, 0.0);
+}
+
+TEST_F(MorphologyProcessorTest, Gradient_UniformImageIsAllZero) {
+    proc.setParameter("operation", 4.f);
+    auto out = proc.process(TestImage::uniform(W, H));
+    double maxVal;
+    cv::minMaxLoc(out.overlayImage, nullptr, &maxVal);
+    EXPECT_EQ(0.0, maxVal);
+}
+
+TEST_F(MorphologyProcessorTest, AllOperations_DoNotCrash) {
+    const auto img = TestImage::checkerboard(W, H);
+    for (int op = 0; op <= 6; ++op) {
+        proc.setParameter("operation", static_cast<float>(op));
+        EXPECT_NO_THROW(proc.process(img)) << "operation=" << op;
+    }
+}
+
+TEST_F(MorphologyProcessorTest, AllKernelShapes_DoNotCrash) {
+    const auto img = TestImage::checkerboard(W, H);
+    for (int shape = 0; shape <= 2; ++shape) {
+        proc.setParameter("kernelShape", static_cast<float>(shape));
+        EXPECT_NO_THROW(proc.process(img)) << "kernelShape=" << shape;
+    }
+}
+
+TEST_F(MorphologyProcessorTest, LargerKernelSize_DoesNotCrash) {
+    proc.setParameter("kernelSize", 21.f);
+    EXPECT_NO_THROW(proc.process(TestImage::checkerboard(W, H)));
+}
+
+TEST_F(MorphologyProcessorTest, MultipleIterations_DoNotCrash) {
+    proc.setParameter("iterations", 5.f);
+    EXPECT_NO_THROW(proc.process(TestImage::checkerboard(W, H)));
+}
+
+TEST_F(MorphologyProcessorTest, SetParameter_UnknownKey_DoesNotCrash) {
     EXPECT_NO_THROW(proc.setParameter("unknown", 1.f));
 }

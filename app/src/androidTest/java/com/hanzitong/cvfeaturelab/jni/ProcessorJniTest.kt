@@ -393,4 +393,90 @@ class ProcessorJniTest {
         val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
         assertNotNull(out)
     }
+
+    // ─── Morphology (OVERLAY_IMAGE) ───────────────────────────────────────────
+
+    @Test
+    fun Morphology_listPlugins_containsMorphology() {
+        assertTrue(ProcessorJni.listPlugins().contains("Morphology"))
+    }
+
+    @Test
+    fun Morphology_outputTypeIsOVERLAY_IMAGE() {
+        ProcessorJni.selectPlugin("Morphology")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals("Morphology must return OVERLAY_IMAGE (1)", 1, out.outputType)
+    }
+
+    @Test
+    fun Morphology_overlayDimensionsMatchFrame() {
+        ProcessorJni.selectPlugin("Morphology")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(W, out.overlayWidth)
+        assertEquals(H, out.overlayHeight)
+        assertEquals(W * H, out.overlayPixels.size)
+    }
+
+    @Test
+    fun Morphology_keypointCountIsZero() {
+        ProcessorJni.selectPlugin("Morphology")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(0, out.keypointCount)
+    }
+
+    @Test
+    fun Morphology_getPluginDefs_hasRequiredParams() {
+        val defs = ProcessorJni.getPluginDefs("Morphology")
+        val keys = defs.map { it.split("|")[0] }.toSet()
+        assertTrue(keys.contains("operation"))
+        assertTrue(keys.contains("kernelSize"))
+        assertTrue(keys.contains("iterations"))
+        assertTrue(keys.contains("kernelShape"))
+    }
+
+    @Test
+    fun Morphology_gradient_checkerboardHasNonZeroPixels() {
+        ProcessorJni.selectPlugin("Morphology")
+        ProcessorJni.setParameter("operation", 4f)  // Gradient
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertTrue("Gradient on checkerboard should produce non-zero pixels",
+            out.overlayPixels.any { it != 0.toByte() })
+    }
+
+    @Test
+    fun Morphology_gradient_uniformImageIsAllZero() {
+        ProcessorJni.selectPlugin("Morphology")
+        ProcessorJni.setParameter("operation", 4f)  // Gradient
+        val out = ProcessorJni.processFrame(makeUniform(), W, H, 0)
+        assertTrue("Gradient on uniform should be all zeros",
+            out.overlayPixels.all { it == 0.toByte() })
+    }
+
+    @Test
+    fun Morphology_allOperations_doNotCrash() {
+        ProcessorJni.selectPlugin("Morphology")
+        for (op in 0..6) {
+            ProcessorJni.setParameter("operation", op.toFloat())
+            val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+            assertNotNull("operation=$op returned null", out)
+        }
+    }
+
+    @Test
+    fun Morphology_allKernelShapes_doNotCrash() {
+        ProcessorJni.selectPlugin("Morphology")
+        for (shape in 0..2) {
+            ProcessorJni.setParameter("kernelShape", shape.toFloat())
+            val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+            assertNotNull("kernelShape=$shape returned null", out)
+        }
+    }
+
+    @Test
+    fun Morphology_rotation90_overlayDimensionsAreSwapped() {
+        ProcessorJni.selectPlugin("Morphology")
+        val out = ProcessorJni.processFrame(makeCheckerboard(W, H), W, H, 90)
+        assertEquals(H, out.overlayWidth)
+        assertEquals(W, out.overlayHeight)
+    }
 }

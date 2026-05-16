@@ -3,6 +3,7 @@
 #include "plugins/orb_processor.h"
 #include "plugins/akaze_processor.h"
 #include "plugins/canny_processor.h"
+#include "plugins/morphology_processor.h"
 
 #include <opencv2/imgproc.hpp>
 #include <chrono>
@@ -10,6 +11,7 @@
 ProcessorRegistry::ProcessorRegistry() {
     registerPlugin(std::make_unique<AKAZEProcessor>());  // map はアルファベット順
     registerPlugin(std::make_unique<CannyProcessor>());
+    registerPlugin(std::make_unique<MorphologyProcessor>());
     registerPlugin(std::make_unique<ORBProcessor>());
     registerPlugin(std::make_unique<SIFTProcessor>());
 
