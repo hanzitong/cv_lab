@@ -31,6 +31,8 @@ add_executable(cv_feature_lab_tests
     ${SRC_DIR}/plugins/orb_processor.cpp
     ${SRC_DIR}/plugins/akaze_processor.cpp
     ${SRC_DIR}/plugins/canny_processor.cpp
+    ${SRC_DIR}/plugins/hough_circles_processor.cpp
+    ${SRC_DIR}/plugins/hough_lines_processor.cpp
     ${SRC_DIR}/plugins/morphology_processor.cpp
 )
 

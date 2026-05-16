@@ -1,6 +1,7 @@
 #pragma once
 
 #include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 #include <cstdint>
 
 namespace TestImage {
@@ -42,6 +43,21 @@ inline cv::Mat dots(int w = 320, int h = 240, int spacing = 40) {
     for (int y = spacing / 2; y < h; y += spacing)
         for (int x = spacing / 2; x < w; x += spacing)
             cv::circle(img, {x, y}, 6, cv::Scalar(200), -1);
+    return img;
+}
+
+// 平行水平線 — HoughLinesP がほぼ必ず検出できる
+inline cv::Mat striped(int w = 320, int h = 240, int stripeHeight = 20) {
+    cv::Mat img = uniform(w, h, 0);
+    for (int y = 0; y < h; y += stripeHeight * 2)
+        img.rowRange(y, std::min(y + stripeHeight, h)).setTo(255);
+    return img;
+}
+
+// 白地に黒円 — HoughCircles がほぼ必ず検出できる
+inline cv::Mat circled(int w = 320, int h = 240) {
+    cv::Mat img = uniform(w, h, 200);
+    cv::circle(img, {w / 2, h / 2}, 60, cv::Scalar(0), 3);
     return img;
 }
 

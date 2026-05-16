@@ -5,6 +5,8 @@
 #include "plugins/akaze_processor.h"
 #include "plugins/canny_processor.h"
 #include "plugins/morphology_processor.h"
+#include "plugins/hough_lines_processor.h"
+#include "plugins/hough_circles_processor.h"
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 共通ヘルパー
@@ -383,4 +385,159 @@ TEST_F(MorphologyProcessorTest, MultipleIterations_DoNotCrash) {
 
 TEST_F(MorphologyProcessorTest, SetParameter_UnknownKey_DoesNotCrash) {
     EXPECT_NO_THROW(proc.setParameter("unknown", 1.f));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HoughLinesProcessor
+// ─────────────────────────────────────────────────────────────────────────────
+
+class HoughLinesProcessorTest : public ::testing::Test {
+protected:
+    HoughLinesProcessor proc;
+    static constexpr int W = 320, H = 240;
+};
+
+TEST_F(HoughLinesProcessorTest, Name_IsHoughLines) {
+    EXPECT_EQ("HoughLines", proc.name());
+}
+
+TEST_F(HoughLinesProcessorTest, OutputType_IsPOINT_VECTORS) {
+    EXPECT_EQ(OutputType::POINT_VECTORS, proc.outputType());
+}
+
+TEST_F(HoughLinesProcessorTest, ParamDefs_HasRequiredKeys) {
+    auto defs = proc.paramDefs();
+    auto has = [&](const std::string& k) {
+        return std::any_of(defs.begin(), defs.end(),
+            [&](const ParamDef& d){ return d.key == k; });
+    };
+    EXPECT_TRUE(has("rho"));
+    EXPECT_TRUE(has("threshold"));
+    EXPECT_TRUE(has("minLineLength"));
+    EXPECT_TRUE(has("maxLineGap"));
+}
+
+TEST_F(HoughLinesProcessorTest, ParamDefs_AllRangesValid) {
+    for (const auto& d : proc.paramDefs())
+        EXPECT_LT(d.min, d.max) << "param " << d.key << " has invalid range";
+}
+
+TEST_F(HoughLinesProcessorTest, ParamDefs_DefaultsInRange) {
+    for (const auto& d : proc.paramDefs())
+        EXPECT_TRUE(d.defaultValue >= d.min && d.defaultValue <= d.max)
+            << "param " << d.key << " default out of range";
+}
+
+TEST_F(HoughLinesProcessorTest, Process_StripedImage_DetectsLines) {
+    proc.setParameter("threshold", 30.f);
+    proc.setParameter("minLineLength", 20.f);
+    auto out = proc.process(TestImage::striped(W, H));
+    EXPECT_GT(out.arrowStarts.size(), 0u);
+}
+
+TEST_F(HoughLinesProcessorTest, Process_UniformImage_NoLines) {
+    auto out = proc.process(TestImage::uniform(W, H));
+    EXPECT_EQ(out.arrowStarts.size(), 0u);
+}
+
+TEST_F(HoughLinesProcessorTest, Process_ArrowStartsEndsHaveSameSize) {
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    EXPECT_EQ(out.arrowStarts.size(), out.arrowEnds.size());
+}
+
+TEST_F(HoughLinesProcessorTest, Process_KeypointsAndOverlayAreEmpty) {
+    auto out = proc.process(TestImage::checkerboard(W, H));
+    EXPECT_TRUE(out.keypoints.empty());
+    EXPECT_TRUE(out.overlayImage.empty());
+}
+
+TEST_F(HoughLinesProcessorTest, SetParameter_HighThreshold_ReducesLines) {
+    proc.setParameter("threshold", 10.f);
+    auto more = proc.process(TestImage::checkerboard(W, H)).arrowStarts.size();
+
+    proc.setParameter("threshold", 200.f);
+    auto fewer = proc.process(TestImage::checkerboard(W, H)).arrowStarts.size();
+
+    EXPECT_GE(more, fewer);
+}
+
+TEST_F(HoughLinesProcessorTest, SetParameter_UnknownKey_DoesNotCrash) {
+    EXPECT_NO_THROW(proc.setParameter("unknown", 0.f));
+    EXPECT_NO_THROW(proc.process(TestImage::checkerboard(W, H)));
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HoughCirclesProcessor
+// ─────────────────────────────────────────────────────────────────────────────
+
+class HoughCirclesProcessorTest : public ::testing::Test {
+protected:
+    HoughCirclesProcessor proc;
+    static constexpr int W = 320, H = 240;
+};
+
+TEST_F(HoughCirclesProcessorTest, Name_IsHoughCircles) {
+    EXPECT_EQ("HoughCircles", proc.name());
+}
+
+TEST_F(HoughCirclesProcessorTest, OutputType_IsKEYPOINTS) {
+    EXPECT_EQ(OutputType::KEYPOINTS, proc.outputType());
+}
+
+TEST_F(HoughCirclesProcessorTest, ParamDefs_HasRequiredKeys) {
+    auto defs = proc.paramDefs();
+    auto has = [&](const std::string& k) {
+        return std::any_of(defs.begin(), defs.end(),
+            [&](const ParamDef& d){ return d.key == k; });
+    };
+    EXPECT_TRUE(has("dp"));
+    EXPECT_TRUE(has("minDist"));
+    EXPECT_TRUE(has("param1"));
+    EXPECT_TRUE(has("param2"));
+    EXPECT_TRUE(has("minRadius"));
+    EXPECT_TRUE(has("maxRadius"));
+}
+
+TEST_F(HoughCirclesProcessorTest, ParamDefs_AllRangesValid) {
+    for (const auto& d : proc.paramDefs())
+        EXPECT_LT(d.min, d.max) << "param " << d.key << " has invalid range";
+}
+
+TEST_F(HoughCirclesProcessorTest, ParamDefs_DefaultsInRange) {
+    for (const auto& d : proc.paramDefs())
+        EXPECT_TRUE(d.defaultValue >= d.min && d.defaultValue <= d.max)
+            << "param " << d.key << " default out of range";
+}
+
+TEST_F(HoughCirclesProcessorTest, Process_CircledImage_DetectsCircle) {
+    proc.setParameter("param2", 15.f);
+    proc.setParameter("minRadius", 40.f);
+    proc.setParameter("maxRadius", 80.f);
+    auto out = proc.process(TestImage::circled(W, H));
+    EXPECT_GT(out.keypoints.size(), 0u);
+}
+
+TEST_F(HoughCirclesProcessorTest, Process_UniformImage_NoCircles) {
+    auto out = proc.process(TestImage::uniform(W, H));
+    EXPECT_EQ(out.keypoints.size(), 0u);
+}
+
+TEST_F(HoughCirclesProcessorTest, Process_KeypointSize_IsPositive) {
+    proc.setParameter("param2", 15.f);
+    proc.setParameter("minRadius", 40.f);
+    proc.setParameter("maxRadius", 80.f);
+    auto out = proc.process(TestImage::circled(W, H));
+    for (const auto& kp : out.keypoints)
+        EXPECT_GT(kp.size, 0.f);
+}
+
+TEST_F(HoughCirclesProcessorTest, Process_ArrowVectorsAndOverlayAreEmpty) {
+    auto out = proc.process(TestImage::circled(W, H));
+    EXPECT_TRUE(out.arrowStarts.empty());
+    EXPECT_TRUE(out.overlayImage.empty());
+}
+
+TEST_F(HoughCirclesProcessorTest, SetParameter_UnknownKey_DoesNotCrash) {
+    EXPECT_NO_THROW(proc.setParameter("unknown", 0.f));
+    EXPECT_NO_THROW(proc.process(TestImage::circled(W, H)));
 }

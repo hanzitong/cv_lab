@@ -479,4 +479,123 @@ class ProcessorJniTest {
         assertEquals(H, out.overlayWidth)
         assertEquals(W, out.overlayHeight)
     }
+
+    // ─── HoughLines (POINT_VECTORS) ───────────────────────────────────────────
+
+    @Test
+    fun listPlugins_containsHoughLines() {
+        assertTrue(ProcessorJni.listPlugins().contains("HoughLines"))
+    }
+
+    @Test
+    fun HoughLines_outputTypeIsPOINT_VECTORS() {
+        ProcessorJni.selectPlugin("HoughLines")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals("HoughLines must return POINT_VECTORS (2)", 2, out.outputType)
+    }
+
+    @Test
+    fun HoughLines_getPluginDefs_hasRequiredParams() {
+        val keys = ProcessorJni.getPluginDefs("HoughLines").map { it.split("|")[0] }.toSet()
+        assertTrue(keys.contains("rho"))
+        assertTrue(keys.contains("threshold"))
+        assertTrue(keys.contains("minLineLength"))
+        assertTrue(keys.contains("maxLineGap"))
+    }
+
+    @Test
+    fun HoughLines_keypointCountAndOverlayAreEmpty() {
+        ProcessorJni.selectPlugin("HoughLines")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(0, out.keypointCount)
+        assertEquals(0, out.overlayPixels.size)
+    }
+
+    @Test
+    fun HoughLines_arrowStartsAndEndsHaveSameSize() {
+        ProcessorJni.selectPlugin("HoughLines")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(out.arrowStartX.size, out.arrowEndX.size)
+        assertEquals(out.arrowStartY.size, out.arrowEndY.size)
+        assertEquals(out.arrowStartX.size, out.arrowStartY.size)
+    }
+
+    @Test
+    fun HoughLines_lowThreshold_detectsLines() {
+        ProcessorJni.selectPlugin("HoughLines")
+        ProcessorJni.setParameter("threshold", 20f)
+        ProcessorJni.setParameter("minLineLength", 10f)
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertTrue("HoughLines should detect lines on checkerboard, got ${out.arrowStartX.size}",
+            out.arrowStartX.isNotEmpty())
+    }
+
+    @Test
+    fun HoughLines_highThreshold_fewerOrEqualLines() {
+        ProcessorJni.selectPlugin("HoughLines")
+        ProcessorJni.setParameter("threshold", 10f)
+        val more = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0).arrowStartX.size
+
+        ProcessorJni.setParameter("threshold", 200f)
+        val fewer = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0).arrowStartX.size
+
+        assertTrue("Higher threshold should produce fewer or equal lines: $more vs $fewer",
+            more >= fewer)
+    }
+
+    // ─── HoughCircles (KEYPOINTS) ─────────────────────────────────────────────
+
+    @Test
+    fun listPlugins_containsHoughCircles() {
+        assertTrue(ProcessorJni.listPlugins().contains("HoughCircles"))
+    }
+
+    @Test
+    fun HoughCircles_outputTypeIsKEYPOINTS() {
+        ProcessorJni.selectPlugin("HoughCircles")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals("HoughCircles must return KEYPOINTS (0)", 0, out.outputType)
+    }
+
+    @Test
+    fun HoughCircles_getPluginDefs_hasRequiredParams() {
+        val keys = ProcessorJni.getPluginDefs("HoughCircles").map { it.split("|")[0] }.toSet()
+        assertTrue(keys.contains("dp"))
+        assertTrue(keys.contains("minDist"))
+        assertTrue(keys.contains("param1"))
+        assertTrue(keys.contains("param2"))
+        assertTrue(keys.contains("minRadius"))
+        assertTrue(keys.contains("maxRadius"))
+    }
+
+    @Test
+    fun HoughCircles_arrowVectorsAndOverlayAreEmpty() {
+        ProcessorJni.selectPlugin("HoughCircles")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(0, out.arrowStartX.size)
+        assertEquals(0, out.overlayPixels.size)
+    }
+
+    @Test
+    fun HoughCircles_arrayLengthsMatchCount() {
+        ProcessorJni.selectPlugin("HoughCircles")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        assertEquals(out.keypointCount, out.keypointX.size)
+        assertEquals(out.keypointCount, out.keypointY.size)
+        assertEquals(out.keypointCount, out.keypointSize.size)
+    }
+
+    @Test
+    fun HoughCircles_keypointSizesArePositive() {
+        ProcessorJni.selectPlugin("HoughCircles")
+        val out = ProcessorJni.processFrame(makeCheckerboard(), W, H, 0)
+        out.keypointSize.forEach { s -> assertTrue("circle size must be positive: $s", s > 0f) }
+    }
+
+    @Test
+    fun HoughCircles_uniformImage_returnsZeroKeypoints() {
+        ProcessorJni.selectPlugin("HoughCircles")
+        val out = ProcessorJni.processFrame(makeUniform(), W, H, 0)
+        assertEquals(0, out.keypointCount)
+    }
 }

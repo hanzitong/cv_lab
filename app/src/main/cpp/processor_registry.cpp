@@ -4,6 +4,8 @@
 #include "plugins/akaze_processor.h"
 #include "plugins/canny_processor.h"
 #include "plugins/morphology_processor.h"
+#include "plugins/hough_circles_processor.h"
+#include "plugins/hough_lines_processor.h"
 
 #include <opencv2/imgproc.hpp>
 #include <chrono>
@@ -11,6 +13,8 @@
 ProcessorRegistry::ProcessorRegistry() {
     registerPlugin(std::make_unique<AKAZEProcessor>());  // map はアルファベット順
     registerPlugin(std::make_unique<CannyProcessor>());
+    registerPlugin(std::make_unique<HoughCirclesProcessor>());
+    registerPlugin(std::make_unique<HoughLinesProcessor>());
     registerPlugin(std::make_unique<MorphologyProcessor>());
     registerPlugin(std::make_unique<ORBProcessor>());
     registerPlugin(std::make_unique<SIFTProcessor>());

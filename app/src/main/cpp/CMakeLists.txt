@@ -19,6 +19,8 @@ add_library(
     plugins/orb_processor.cpp
     plugins/akaze_processor.cpp
     plugins/canny_processor.cpp
+    plugins/hough_circles_processor.cpp
+    plugins/hough_lines_processor.cpp
     plugins/morphology_processor.cpp
 )
 
