@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.ui
+package com.hanzitong.cvlab.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.hanzitong.cvfeaturelab.viewmodel.Algorithm
-import com.hanzitong.cvfeaturelab.viewmodel.ParameterDef
-import com.hanzitong.cvfeaturelab.viewmodel.algorithmParameters
+import com.hanzitong.cvlab.viewmodel.Algorithm
+import com.hanzitong.cvlab.viewmodel.ParameterDef
+import com.hanzitong.cvlab.viewmodel.algorithmParameters
 
 /**
  * アルゴリズムのパラメータースライダー一覧パネル。

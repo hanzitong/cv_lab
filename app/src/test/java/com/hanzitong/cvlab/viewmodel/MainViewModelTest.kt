@@ -1,7 +1,7 @@
-package com.hanzitong.cvfeaturelab.viewmodel
+package com.hanzitong.cvlab.viewmodel
 
-import com.hanzitong.cvfeaturelab.jni.IProcessorApi
-import com.hanzitong.cvfeaturelab.jni.ProcessOutput
+import com.hanzitong.cvlab.jni.IProcessorApi
+import com.hanzitong.cvlab.jni.ProcessOutput
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

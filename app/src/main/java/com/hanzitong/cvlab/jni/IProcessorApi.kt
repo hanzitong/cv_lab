@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.jni
+package com.hanzitong.cvlab.jni
 
 /**
  * JNI レイヤーの抽象インターフェース。

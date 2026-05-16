@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.jni
+package com.hanzitong.cvlab.jni
 
 object ProcessorJni : IProcessorApi {
     override external fun init()
@@ -15,6 +15,6 @@ object ProcessorJni : IProcessorApi {
     ): ProcessOutput
 
     init {
-        System.loadLibrary("cv_feature_lab")
+        System.loadLibrary("cv_lab")
     }
 }

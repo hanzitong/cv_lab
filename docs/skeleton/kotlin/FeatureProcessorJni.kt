@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.jni
+package com.hanzitong.cvlab.jni
 
 object FeatureProcessorJni {
     external fun init()
@@ -13,6 +13,6 @@ object FeatureProcessorJni {
     ): ProcessResult
 
     init {
-        System.loadLibrary("cv_feature_lab")
+        System.loadLibrary("cv_lab")
     }
 }

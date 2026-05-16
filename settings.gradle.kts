@@ -18,5 +18,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "cv_feature_lab"
+rootProject.name = "cv_lab"
 include(":app")

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
-project("cv_feature_lab" CXX)
+project("cv_lab" CXX)
 
 if(NOT DEFINED OPENCV_SDK_PATH OR OPENCV_SDK_PATH STREQUAL "")
     message(FATAL_ERROR
@@ -11,7 +11,7 @@ set(OpenCV_DIR "${OPENCV_SDK_PATH}/sdk/native/jni")
 find_package(OpenCV REQUIRED core imgproc features2d)
 
 add_library(
-    cv_feature_lab
+    cv_lab
     SHARED
     jni_bridge.cpp
     processor_registry.cpp
@@ -24,21 +24,21 @@ add_library(
     plugins/morphology_processor.cpp
 )
 
-target_include_directories(cv_feature_lab PRIVATE
+target_include_directories(cv_lab PRIVATE
     ${OpenCV_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_features(cv_feature_lab PRIVATE cxx_std_17)
+target_compile_features(cv_lab PRIVATE cxx_std_17)
 
-target_compile_options(cv_feature_lab PRIVATE
+target_compile_options(cv_lab PRIVATE
     -O2
     -Wall
     -Wextra
     -march=armv8-a+simd
 )
 
-target_link_libraries(cv_feature_lab
+target_link_libraries(cv_lab
     ${OpenCV_LIBS}
     android
     log

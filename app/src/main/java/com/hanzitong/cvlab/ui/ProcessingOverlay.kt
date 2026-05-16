@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.ui
+package com.hanzitong.cvlab.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.scale
-import com.hanzitong.cvfeaturelab.viewmodel.UiState
+import com.hanzitong.cvlab.viewmodel.UiState
 
 /**
  * outputType に応じてオーバーレイを描画する。

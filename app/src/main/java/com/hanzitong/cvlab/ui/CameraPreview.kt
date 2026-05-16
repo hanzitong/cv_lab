@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.ui
+package com.hanzitong.cvlab.ui
 
 import android.util.Log
 import android.util.Size
@@ -14,8 +14,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.hanzitong.cvfeaturelab.jni.ProcessorJni
-import com.hanzitong.cvfeaturelab.jni.ProcessOutput
+import com.hanzitong.cvlab.jni.ProcessorJni
+import com.hanzitong.cvlab.jni.ProcessOutput
 import java.util.concurrent.Executors
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine

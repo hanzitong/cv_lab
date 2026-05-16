@@ -2,7 +2,7 @@
 #include <android/log.h>
 #include "feature_processor.h"
 
-#define LOG_TAG "cv_feature_lab"
+#define LOG_TAG "cv_lab"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
 
@@ -15,7 +15,7 @@ static jmethodID     gResultCtor  = nullptr;
 
 // キャッシュ初期化（init から呼ぶ）
 static void cacheResultClass(JNIEnv* env) {
-    jclass local = env->FindClass("com/hanzitong/cvfeaturelab/jni/ProcessResult");
+    jclass local = env->FindClass("com/hanzitong/cvlab/jni/ProcessResult");
     if (!local) {
         LOGE("ProcessResult class not found — check package name");
         return;
@@ -33,7 +33,7 @@ static void cacheResultClass(JNIEnv* env) {
 extern "C" {
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_init(JNIEnv* env, jobject) {
+Java_com_hanzitong_cvlab_jni_FeatureProcessorJni_init(JNIEnv* env, jobject) {
     if (gProcessor) {
         LOGI("init called while already initialized — reinitializing");
         delete gProcessor;
@@ -44,7 +44,7 @@ Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_init(JNIEnv* env, jobjec
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_destroy(JNIEnv* env, jobject) {
+Java_com_hanzitong_cvlab_jni_FeatureProcessorJni_destroy(JNIEnv* env, jobject) {
     delete gProcessor;
     gProcessor = nullptr;
 
@@ -57,14 +57,14 @@ Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_destroy(JNIEnv* env, job
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_setAlgorithm(
+Java_com_hanzitong_cvlab_jni_FeatureProcessorJni_setAlgorithm(
         JNIEnv*, jobject, jint type) {
     if (gProcessor)
         gProcessor->setAlgorithm(static_cast<AlgorithmType>(type));
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_setParameter(
+Java_com_hanzitong_cvlab_jni_FeatureProcessorJni_setParameter(
         JNIEnv* env, jobject, jstring key, jfloat value) {
     if (!gProcessor) return;
     const char* k = env->GetStringUTFChars(key, nullptr);
@@ -75,7 +75,7 @@ Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_setParameter(
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_FeatureProcessorJni_processFrame(
+Java_com_hanzitong_cvlab_jni_FeatureProcessorJni_processFrame(
         JNIEnv* env, jobject,
         jbyteArray yuvBytes, jint width, jint height, jint rotationDegrees) {
 

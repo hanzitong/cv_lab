@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.viewmodel
+package com.hanzitong.cvlab.viewmodel
 
 // Ordinal values must stay in sync with AlgorithmType enum in feature_processor.h
 enum class Algorithm(val displayName: String) {

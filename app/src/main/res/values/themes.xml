@@ -4,7 +4,7 @@
         Compose が全ての UI を描画するため、XML テーマは最小構成にする。
         NoActionBar を選ぶことでシステムが ActionBar を inflate しなくなる。
     -->
-    <style name="Theme.CvFeatureLab" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.CvLab" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@android:color/black</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

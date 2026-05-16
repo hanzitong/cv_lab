@@ -55,7 +55,7 @@ opencv.sdk.path=/path/to/OpenCV-android-sdk
 
 ## 4. プロジェクトを Android Studio で開く
 
-1. Android Studio で `cv_feature_lab/` ディレクトリを開く
+1. Android Studio で `cv_lab/` ディレクトリを開く
 2. Gradle Sync を実行（自動で促される場合はそのまま実行）
 3. Gradle Wrapper が存在しない場合: Android Studio が自動的に生成を提案する
 

@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.viewmodel
+package com.hanzitong.cvlab.viewmodel
 
 import org.junit.Assert.*
 import org.junit.Test

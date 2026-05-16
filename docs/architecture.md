@@ -28,7 +28,7 @@
 │  ┌───────────────────────────▼──────────────────────────────────┐   │
 │  │  FeatureProcessorJni (object)  ← JNIラッパー、外部非公開      │   │
 │  └───────────────────────────┬──────────────────────────────────┘   │
-│                              │ System.loadLibrary("cv_feature_lab") │
+│                              │ System.loadLibrary("cv_lab") │
 ├──────────────────────────────┼──────────────────────────────────────┤
 │                    JNI 境界（単一交差点）                           │
 │                     jni_bridge.cpp                                  │
@@ -107,7 +107,7 @@ FeatureProcessor::setParameter() → detector_->setParameter()
 ## ファイル構成
 
 ```
-cv_feature_lab/
+cv_lab/
 ├── app/src/main/
 │   ├── cpp/
 │   │   ├── CMakeLists.txt
@@ -118,7 +118,7 @@ cv_feature_lab/
 │   │       ├── sift_detector.h/.cpp
 │   │       ├── orb_detector.h/.cpp
 │   │       └── akaze_detector.h/.cpp
-│   └── java/com/hanzitong/cvfeaturelab/
+│   └── java/com/hanzitong/cvlab/
 │       ├── MainActivity.kt          パーミッション + JNI init/destroy
 │       ├── jni/
 │       │   ├── FeatureProcessorJni.kt  唯一のJNIラッパー

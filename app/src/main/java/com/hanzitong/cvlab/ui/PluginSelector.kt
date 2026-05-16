@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.ui
+package com.hanzitong.cvlab.ui
 
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import com.hanzitong.cvfeaturelab.viewmodel.PluginInfo
+import com.hanzitong.cvlab.viewmodel.PluginInfo
 
 @Composable
 fun PluginSelector(

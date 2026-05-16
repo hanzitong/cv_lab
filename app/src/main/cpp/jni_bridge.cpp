@@ -5,7 +5,7 @@
 #include <cstring>
 #include <string>
 
-#define LOG_TAG "cv_feature_lab"
+#define LOG_TAG "cv_lab"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
 
@@ -23,7 +23,7 @@ static constexpr char kOutputCtorSig[] =
 
 static void cacheOutputClass(JNIEnv* env) {
     jclass local = env->FindClass(
-        "com/hanzitong/cvfeaturelab/jni/ProcessOutput");
+        "com/hanzitong/cvlab/jni/ProcessOutput");
     if (!local) {
         LOGE("ProcessOutput class not found — check package name");
         return;
@@ -45,7 +45,7 @@ static void fillFloatArray(JNIEnv* env, jfloatArray arr, const float* data, int 
 extern "C" {
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_init(JNIEnv* env, jobject) {
+Java_com_hanzitong_cvlab_jni_ProcessorJni_init(JNIEnv* env, jobject) {
     if (gRegistry) {
         LOGI("init called while already initialized — reinitializing");
         delete gRegistry;
@@ -56,7 +56,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_init(JNIEnv* env, jobject) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_destroy(JNIEnv* env, jobject) {
+Java_com_hanzitong_cvlab_jni_ProcessorJni_destroy(JNIEnv* env, jobject) {
     delete gRegistry;
     gRegistry = nullptr;
 
@@ -70,7 +70,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_destroy(JNIEnv* env, jobject) {
 
 // プラグイン一覧を String[] として返す
 JNIEXPORT jobjectArray JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_listPlugins(JNIEnv* env, jobject) {
+Java_com_hanzitong_cvlab_jni_ProcessorJni_listPlugins(JNIEnv* env, jobject) {
     if (!gRegistry) return env->NewObjectArray(0, env->FindClass("java/lang/String"), nullptr);
 
     auto names = gRegistry->listPlugins();
@@ -88,7 +88,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_listPlugins(JNIEnv* env, jobjec
 
 // プラグインのパラメーター定義を "key|displayName|min|max|default|isInt" 形式で返す
 JNIEXPORT jobjectArray JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_getPluginDefs(
+Java_com_hanzitong_cvlab_jni_ProcessorJni_getPluginDefs(
         JNIEnv* env, jobject, jstring jname) {
     const char* cname = env->GetStringUTFChars(jname, nullptr);
     auto defs = gRegistry ? gRegistry->getParamDefs(cname ? cname : "") : std::vector<ParamDef>{};
@@ -113,7 +113,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_getPluginDefs(
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_selectPlugin(
+Java_com_hanzitong_cvlab_jni_ProcessorJni_selectPlugin(
         JNIEnv* env, jobject, jstring jname) {
     if (!gRegistry) return;
     const char* name = env->GetStringUTFChars(jname, nullptr);
@@ -124,7 +124,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_selectPlugin(
 }
 
 JNIEXPORT void JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_setParameter(
+Java_com_hanzitong_cvlab_jni_ProcessorJni_setParameter(
         JNIEnv* env, jobject, jstring jkey, jfloat value) {
     if (!gRegistry) return;
     const char* key = env->GetStringUTFChars(jkey, nullptr);
@@ -135,7 +135,7 @@ Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_setParameter(
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_hanzitong_cvfeaturelab_jni_ProcessorJni_processFrame(
+Java_com_hanzitong_cvlab_jni_ProcessorJni_processFrame(
         JNIEnv* env, jobject,
         jbyteArray yuvBytes, jint width, jint height, jint rotationDegrees) {
 

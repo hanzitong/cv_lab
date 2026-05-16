@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab.viewmodel
+package com.hanzitong.cvlab.viewmodel
 
 data class ParameterDef(
     val key: String,

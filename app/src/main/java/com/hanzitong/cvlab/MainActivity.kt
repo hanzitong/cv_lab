@@ -1,4 +1,4 @@
-package com.hanzitong.cvfeaturelab
+package com.hanzitong.cvlab
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -9,10 +9,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import com.hanzitong.cvfeaturelab.jni.ProcessorJni
-import com.hanzitong.cvfeaturelab.ui.MainScreen
-import com.hanzitong.cvfeaturelab.ui.theme.CvFeatureLabTheme
-import com.hanzitong.cvfeaturelab.viewmodel.MainViewModel
+import com.hanzitong.cvlab.jni.ProcessorJni
+import com.hanzitong.cvlab.ui.MainScreen
+import com.hanzitong.cvlab.ui.theme.CvLabTheme
+import com.hanzitong.cvlab.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
     private fun showUi() {
         setContent {
-            CvFeatureLabTheme {
+            CvLabTheme {
                 MainScreen(viewModel)
             }
         }

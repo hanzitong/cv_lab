@@ -16,11 +16,11 @@ val localProps = Properties().also { props ->
 val opencvSdkPath: String = localProps.getProperty("opencv.sdk.path", "")
 
 android {
-    namespace   = "com.hanzitong.cvfeaturelab"
+    namespace   = "com.hanzitong.cvlab"
     compileSdk  = 35
 
     defaultConfig {
-        applicationId    = "com.hanzitong.cvfeaturelab"
+        applicationId    = "com.hanzitong.cvlab"
         minSdk           = 33    // Pixel 7a ships with Android 13
         targetSdk        = 35
         versionCode      = 1

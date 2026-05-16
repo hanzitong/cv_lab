@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22.1)
-project(cv_feature_lab_tests CXX)
+project(cv_lab_tests CXX)
 
 # ホストマシン（Linux）上でOpenCVとGTestを使って実行するC++ユニットテスト
 # 使い方:
@@ -23,7 +23,7 @@ enable_testing()
 
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../app/src/main/cpp")
 
-add_executable(cv_feature_lab_tests
+add_executable(cv_lab_tests
     cpp/detector_tests.cpp
     cpp/feature_processor_tests.cpp
     ${SRC_DIR}/processor_registry.cpp
@@ -36,19 +36,19 @@ add_executable(cv_feature_lab_tests
     ${SRC_DIR}/plugins/morphology_processor.cpp
 )
 
-target_include_directories(cv_feature_lab_tests PRIVATE
+target_include_directories(cv_lab_tests PRIVATE
     ${OpenCV_INCLUDE_DIRS}
     ${SRC_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cpp
 )
 
-target_compile_features(cv_feature_lab_tests PRIVATE cxx_std_17)
-target_compile_options(cv_feature_lab_tests PRIVATE -Wall -Wextra)
+target_compile_features(cv_lab_tests PRIVATE cxx_std_17)
+target_compile_options(cv_lab_tests PRIVATE -Wall -Wextra)
 
-target_link_libraries(cv_feature_lab_tests
+target_link_libraries(cv_lab_tests
     GTest::gtest_main
     ${OpenCV_LIBS}
 )
 
 include(GoogleTest)
-gtest_discover_tests(cv_feature_lab_tests)
+gtest_discover_tests(cv_lab_tests)

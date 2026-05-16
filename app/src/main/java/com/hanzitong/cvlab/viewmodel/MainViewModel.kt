@@ -1,9 +1,9 @@
-package com.hanzitong.cvfeaturelab.viewmodel
+package com.hanzitong.cvlab.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.hanzitong.cvfeaturelab.jni.IProcessorApi
-import com.hanzitong.cvfeaturelab.jni.ProcessorJni
-import com.hanzitong.cvfeaturelab.jni.ProcessOutput
+import com.hanzitong.cvlab.jni.IProcessorApi
+import com.hanzitong.cvlab.jni.ProcessorJni
+import com.hanzitong.cvlab.jni.ProcessOutput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
